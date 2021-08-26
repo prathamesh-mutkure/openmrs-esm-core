@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
+import isToday from "dayjs/plugin/isToday";
 import {
   getVisitsForPatient,
   getStartedVisit,
@@ -7,6 +8,7 @@ import {
   VisitStatus,
   Visit,
 } from "@openmrs/esm-api";
+
 
 export function useVisit(patientUuid: string) {
   const [currentVisit, setCurrentVisit] = useState<Visit | null>(null);
@@ -28,8 +30,8 @@ export function useVisit(patientUuid: string) {
       ({ data }) => {
         const currentVisit = data.results.find(
           (visit) =>
-            dayjs(visit.startDatetime).format("DD-MM-YYYY") ===
-            dayjs(new Date()).format("DD-MM-YYYY")
+            dayjs(visit?.startDatetime).isToday() &&
+            visit?.stopDatetime === null
         );
 
         if (currentVisit) {
